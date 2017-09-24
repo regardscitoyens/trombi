@@ -168,6 +168,7 @@ new Vue({
     imgWidthMax: 200,
     imgWidthStep: 10,
     imgRatio: 1.3,
+    editing: null,
     parls: [],
     data: {}
   },
@@ -177,10 +178,12 @@ new Vue({
   },
   watch: {
     imgWidth: function(data) {
-      this.setUrl();
+      clearTimeout(this.editing);
+      this.editing = setTimeout(this.setUrl, 25);
     },
     search: function(data) {
-      this.updateData();
+      clearTimeout(this.editing);
+      this.editing = setTimeout(this.updateData, 250);
     }
   },
   methods: {
