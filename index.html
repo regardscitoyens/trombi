@@ -19,6 +19,19 @@
 .input-group--slider .input-group__input {
   margin-left: 16px;
 }
+.slider__track-fill, .slider__thumb--label, .slider__thumb {
+  background: #f44336!important;
+  border-color: #f44336;
+}
+.input-group__details:before, .input-group__details:after {
+  background-color: white!important;
+}
+.input-group--text-field input {
+  caret-color: white;
+}
+.input-group__input .icon{
+  color: white!important;
+}
 .progress-circular {
   left: 50%;
   top: 150px;
@@ -59,15 +72,18 @@
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
-      <v-subheader class="mt-3 grey--text text--darken-1"> Taille des photos</v-subheader>
-      <v-slider snap
-        v-model="imgWidth"
-        :min="imgWidthMin"
-        :max="imgWidthMax"
-        :step="imgWidthStep"
-        prepend-icon="photo_size_select_large"
-        thumb-label
-      ></v-slider>
+      <v-list dense>
+        <v-subheader dense class="mt-3 grey--text text--darken-1"> Taille des photos</v-subheader>
+        <v-list-tile>
+        <v-slider snap thumb-label
+          v-model="imgWidth"
+          :min="imgWidthMin"
+          :max="imgWidthMax"
+          :step="imgWidthStep"
+          prepend-icon="photo_size_select_large"
+        ></v-slider>
+        </v-list-tile>
+      </v-list>
     </v-navigation-drawer>
     <v-toolbar class="red" fixed>
       <v-toolbar-title>
@@ -203,7 +219,7 @@ new Vue({
   watch: {
     imgWidth: function(data) {
       clearTimeout(this.editing);
-      this.editing = setTimeout(this.setUrl, 25);
+      this.editing = setTimeout(this.setUrl, 100);
     },
     search: function(data) {
       clearTimeout(this.editing);
