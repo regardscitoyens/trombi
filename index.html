@@ -130,7 +130,7 @@
     </main>
     <v-dialog v-model="help" width="33%">
       <v-card>
-        <v-card-title class="headline">Trombinoscope des parlementaires<br/><small>par <a href="https://www.regardscitoyens.org" target="_blank">Regards Citoyens</a></small></v-card-title>
+        <v-card-title class="headline">Trombinoscope des parlementaires <small>&nbsp;&nbsp;par&nbsp;<a href="https://www.regardscitoyens.org" target="_blank">Regards Citoyens</a></small></v-card-title>
         <v-card-text>Réalisé à partir des <a href="https://github.com/regardscitoyens/nosdeputes.fr/blob/master/doc/api.md" target="_blank">API</a> de <a href="https://www.nosdeputes.fr" target="_blank">NosDéputés.fr</a> et <a href="https://www.nossenateurs.fr" target="_blank">NosSénateurs.fr</a> à l'aide de <a href="https://vuejs.org" target="_blank">VueJS</a> et <a href="https://vuetifyjs.com/" target="_blank">VuetifyJS</a>.</v-card-text>
         <v-card-text>Cette application est un logiciel libre sous licence AGPL dont le code source est <a href="https://github.com/regardscitoyens/trombi" target="_blank">disponible sur GitHub</a>.</v-card-text>
         <v-card-actions>
@@ -154,9 +154,9 @@ new Vue({
       name: "Chambre",
       selected: "an-2017",
       options: [{
-        id: "an-2017",
-        name: "AN 15ème législature",
-        source: "https://www.nosdeputes.fr",
+        id: "an-2007",
+        name: "AN 13ème législature",
+        source: "https://2007-2012.nosdeputes.fr",
         icon: "account_balance"
       }, {
         id: "an-2012",
@@ -164,9 +164,9 @@ new Vue({
         source: "https://2012-2017.nosdeputes.fr",
         icon: "account_balance"
       }, {
-        id: "an-2007",
-        name: "AN 13ème législature",
-        source: "https://2007-2012.nosdeputes.fr",
+        id: "an-2017",
+        name: "AN 15ème législature",
+        source: "https://www.nosdeputes.fr",
         icon: "account_balance"
       }, {
         id: "senat",
