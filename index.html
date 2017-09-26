@@ -155,6 +155,15 @@ a {
     </v-toolbar>
     <main>
       <v-progress-circular v-if="loadingData" indeterminate :size="100" :width="10" class="red--text"></v-progress-circular>
+      <center><div class="box" style="width: 250px; height: 300px; position: relative;">
+       <img
+          v-for="parl in parls"
+          :src="source + parl.slug + '/300?color=1&noflip=1'"
+          width="250"
+          height="300"
+          :style="{'position': 'absolute', 'top': '0', 'left': '0', 'opacity': Math.max(0.004, 1/parls.length)}"
+        />
+      </div></center>
       <v-container fluid absolute
         :class="{'hidden': !details}"
         v-for="group in groups"
@@ -185,7 +194,7 @@ a {
         </v-layout>
       </v-container>
       <v-container fluid absolute
-        :class="{'hidden': details}"
+        :class="{'hidden': !details}"
       >
         <v-layout row wrap>
           <span
