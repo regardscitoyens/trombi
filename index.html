@@ -57,7 +57,7 @@
 }
 .cardtitle {
   margin: auto;
-  height: 46px;
+  height: 38px;
   display: block;
   line-height: 20px!important;
   font-size: 15px!important;
@@ -164,17 +164,19 @@ a {
             :key="parl.slug"
           >
             <v-card raised
-              :style="{'min-width': imgWidth + 20 + 'px', 'max-width': Math.min(220, 3 * imgWidth) + 'px'}"
-              v-tooltip:bottom="{html: tooltip(parl, sort, true)}"
+              class="pa-1"
+              :style="{'width': Math.max(180, imgWidth+10) + 'px'}"
             >
-              <a :href="parl.url" target="_blank" style="display: block;">
-                <img class="ma-1"
+              <a :href="parl.url" target="_blank" style="display: block;"
+                v-tooltip:top="{html: tooltip(parl, sort, true)}"
+              >
+                <img
                   :src="source + parl.slug + '/300?color=1&noflip=1'"
                   :alt="parl.name"
                   :width="imgWidth"
                   :height="imgRatio * imgWidth"
                 />
-                <div class="pl-1 pr-1 pb-1 pt-0">
+                <div class="pl-1 pr-1 pb-1 pt-0 mt-0">
                   <span class="cardtitle grey--text text--lighten-1" v-text="parl.name"></span>
                 </div>
               </a>
@@ -283,7 +285,7 @@ new Vue({
     search: "",
     help: false,
     imgWidth: 120,
-    imgWidthMin: 50,
+    imgWidthMin: 40,
     imgWidthMax: 200,
     imgWidthStep: 10,
     imgRatio: 1.3,
