@@ -9,15 +9,21 @@
 .btn--floating.btn--small .icon {
   font-size: 30px;
 }
+.hidden {
+  display: none;
+}
 .subheader {
   text-transform: uppercase;
+  width: 100%;
 }
 .list [disabled], .list .selected {
   background-color: #f44336;
   opacity: 1!important;
 }
 .input-group--slider .input-group__input {
-  margin-left: 16px;
+  margin-left: 13px;
+  margin-right: 10px;
+  margin-top: -13px;
 }
 .slider__track-fill, .slider__thumb--label, .slider__thumb {
   background: #f44336!important;
@@ -29,14 +35,24 @@
 .input-group--text-field input {
   caret-color: white;
 }
-.input-group__input .icon{
+.input-group__input .icon {
   color: white!important;
+}
+.input-group--selection-controls__ripple--active:after {
+  background-color: #f44336!important;
+}
+.input-group--selection-controls__container {
+  color: #f44336!important;
+}
+.alignright {
+  text-align: right;
 }
 .progress-circular {
   left: 50%;
   top: 150px;
 }
-.wrap {
+.application--toolbar>main>.container {
+  min-height: 0;
   text-align: center;
 }
 .wrap img {
@@ -74,15 +90,30 @@
         </v-list-tile>
       </v-list>
       <v-list dense>
-        <v-subheader dense class="mt-3 grey--text text--darken-1"> Taille des photos</v-subheader>
+        <v-subheader class="mt-3 grey--text text--darken-1">Affichage</v-subheader>
         <v-list-tile>
-        <v-slider snap thumb-label
-          v-model="imgWidth"
-          :min="imgWidthMin"
-          :max="imgWidthMax"
-          :step="imgWidthStep"
-          prepend-icon="photo_size_select_large"
-        ></v-slider>
+          <v-list-tile-action>
+            <v-icon>info</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title class="alignright pr-3">voir les détails</v-list-tile-title>
+          </v-list-tile-content>
+          <v-list-tile-action>
+            <v-switch v-model="details" light></v-switch>
+          </v-list-tile-action>
+        </v-list-tile>
+        <v-list-tile>
+          <v-list-tile-action>
+            <v-icon>photo_size_select_large</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-slider snap
+              v-model="imgWidth"
+              :min="imgWidthMin"
+              :max="imgWidthMax"
+              :step="imgWidthStep"
+            ></v-slider>
+          </v-list-tile-content>
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
@@ -109,8 +140,32 @@
       </v-btn>
     </v-toolbar>
     <main>
-      <v-container fluid absolute>
-        <v-progress-circular v-if="loadingData" indeterminate v-bind:size="100" v-bind:width="10" class="red--text"></v-progress-circular>
+      <v-progress-circular v-if="loadingData" indeterminate v-bind:size="100" v-bind:width="10" class="red--text"></v-progress-circular>
+      <v-container fluid absolute
+        :class="{'hidden': !details}"
+        v-for="group in groups"
+        :key="group.id"
+      >
+        <v-layout row wrap>
+          <v-subheader v-if="group.id" class="mt-3 grey--text text--darken-1">{{ group.id }}</v-subheader>
+          <v-flex
+            v-for="parl in group.parls"
+            :key="parl.slug"
+            v-tooltip:top="{html: tooltip(parl, sort)}"
+          >
+            {{ parl.name }}<br>
+            <a :href="parl.url" target="_blank">
+              <img
+                :src="source + parl.slug + '/300?color=1&noflip=1'"
+                :alt="parl.name"
+                :width="imgWidth"
+                :height="imgRatio * imgWidth"
+              />
+            </a>
+          </v-flex>
+        </v-layout>
+      </v-container>
+      <v-container fluid absolute :class="{'hidden': details}">
         <v-layout row wrap>
           <v-flex
             v-for="parl in parls"
@@ -213,8 +268,10 @@ new Vue({
     imgWidthMax: 200,
     imgWidthStep: 10,
     imgRatio: 1.3,
+    details: false,
     editing: null,
     parls: [],
+    groups: [],
     data: {}
   },
   mounted: function() {
@@ -225,6 +282,9 @@ new Vue({
     imgWidth: function(data) {
       clearTimeout(this.editing);
       this.editing = setTimeout(this.setUrl, 100);
+    },
+    details: function(data) {
+      this.setUrl();
     },
     search: function(data) {
       clearTimeout(this.editing);
@@ -237,6 +297,7 @@ new Vue({
         return m.id + "=" + m.selected;
       }).filter(function(d) { return /=./.test(d); })
       .concat("taille=" + this.imgWidth)
+      .concat("details=" + (+this.details))
       .join("&");
     },
     readUrl: function() {
@@ -246,6 +307,8 @@ new Vue({
         el = urlArgs[i].split(/=/);
         if (el[0] === "taille")
           this.imgWidth = +el[1];
+        else if (el[0] === "details")
+          this.details = !!(+el[1]);
         else this.menus
           .filter(function(m) { return m.id === el[0]; })
           .forEach(function(m) { m.selected = el[1]; });
@@ -261,6 +324,9 @@ new Vue({
     tooltip: function(parl, sort) {
       return parl.name + (parl[sort] ? " (" + parl[sort] + ")" : "");
     },
+    agize: function(d) {
+      return Math.floor((new Date() - new Date(d))/31557600000) + " ans";
+    },
     comparable: function(s) {
       return s.toLowerCase()
         .replace(/[àâä]/g, 'a')
@@ -275,10 +341,7 @@ new Vue({
       var self = this,
         sourceId = this.menus[0].selected,
         source = this.menus[0].options.filter(function(o) { return o.id === sourceId; })[0],
-        typeParl = source.source.replace(/^.*\.nos(.*)s\.fr.*$/, "$1"),
-        agize = function(d) {
-          return Math.floor((new Date() - new Date(d))/31557600000)
-        };
+        typeParl = source.source.replace(/^.*\.nos(.*)s\.fr.*$/, "$1");
       this.parls = [];
       this.source = source.source + "/" + typeParl + "/photo/";
       this.imgRatio = (typeParl === "depute" ? 1.3 : 1.37);
@@ -299,6 +362,7 @@ new Vue({
                 groupe: p.groupe_sigle,
                 sexe: p.sexe,
                 naissance: p.date_naissance,
+                deptmt: p.nom_circo + " (" + p.num_deptmt + ")",
                 circo: p.num_deptmt + (p.num_circo ? "-" + p.num_circo : "")
               };
             });
@@ -332,6 +396,27 @@ new Vue({
         if (a.nom > b.nom) return 1;
         return 0;
       });
+      if (!~["groupe", "sexe", "circo", "naissance"].indexOf(sort))
+        this.groups = [{id: "", parls: this.parls}];
+      else {
+        this.groups = [];
+        for (var i=0, n=this.parls.length, cur, curId, curgpe; i<n; i++) {
+          if (sort === "naissance")
+            cur = this.agize(this.parls[i].naissance);
+          else if (sort === "sexe")
+            cur = this.parls[i].sexe.replace("F", "Fe").replace("H", "Ho") + "mmes";
+          else if (sort === "circo")
+            cur = this.parls[i].deptmt;
+          else cur = this.parls[i][sort];
+          if (cur !== curId) {
+            if (curgpe) this.groups.push(curgpe);
+            curId = cur;
+            curgpe = {id: curId, parls: []};
+          }
+          curgpe.parls.push(this.parls[i]);
+        }
+        if (curgpe) this.groups.push(curgpe);
+      }
       this.loadingData = false;
     }
   }
