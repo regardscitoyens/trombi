@@ -115,7 +115,7 @@
           <v-flex
             v-for="parl in parls"
             :key="parl.slug"
-            v-tooltip:top="{html: parl.name + ' (' + parl[sort] + ')'}"
+            v-tooltip:top="{html: tooltip(parl, sort)}"
           >
             <a :href="parl.url" target="_blank">
               <img
@@ -257,6 +257,9 @@ new Vue({
       });
       if (optionId === "random") this.updateData();
       this.$nextTick(this.setUrl);
+    },
+    tooltip: function(parl, sort) {
+      return parl.name + (parl[sort] ? " (" + parl[sort] + ")" : "");
     },
     comparable: function(s) {
       return s.toLowerCase()
