@@ -47,6 +47,9 @@
 .alignright {
   text-align: right;
 }
+.floatleft {
+  float: left;
+}
 .progress-circular {
   left: 50%;
   top: 150px;
@@ -152,43 +155,42 @@ a {
     </v-toolbar>
     <main>
       <v-progress-circular v-if="loadingData" indeterminate :size="100" :width="10" class="red--text"></v-progress-circular>
-      <v-container fluid absolute grid-list-lg
+      <v-container fluid absolute
         :class="{'hidden': !details}"
         v-for="group in groups"
         :key="group.id"
       >
         <v-layout row wrap>
           <v-subheader v-if="group.id" class="mb-0 mt-4 grey--text text--darken-1">{{ group.id }}</v-subheader>
-          <v-flex
+          <v-card raised
             v-for="parl in group.parls"
             :key="parl.slug"
+            class="pa-1 ma-2 floatleft"
+            :style="{'width': Math.max(180, imgWidth+10) + 'px'}"
           >
-            <v-card raised
-              class="pa-1"
-              :style="{'width': Math.max(180, imgWidth+10) + 'px'}"
+            <a :href="parl.url" target="_blank" style="display: block;"
+              v-tooltip:top="{html: tooltip(parl, sort, true)}"
             >
-              <a :href="parl.url" target="_blank" style="display: block;"
-                v-tooltip:top="{html: tooltip(parl, sort, true)}"
-              >
-                <img
-                  :src="source + parl.slug + '/300?color=1&noflip=1'"
-                  :alt="parl.name"
-                  :width="imgWidth"
-                  :height="imgRatio * imgWidth"
-                />
-                <div class="pl-1 pr-1 pb-1 pt-0 mt-0">
-                  <span class="cardtitle grey--text text--lighten-1" v-text="parl.name"></span>
-                </div>
-              </a>
-            </v-card>
-          </v-flex>
+              <img
+                :src="source + parl.slug + '/300?color=1&noflip=1'"
+                :alt="parl.name"
+                :width="imgWidth"
+                :height="imgRatio * imgWidth"
+              />
+              <div class="pl-1 pr-1 pb-1 pt-0 mt-0">
+                <span class="cardtitle grey--text text--lighten-1" v-text="parl.name"></span>
+              </div>
+            </a>
+          </v-card>
         </v-layout>
       </v-container>
-      <v-container fluid absolute grid-list-xs
+      <v-container fluid absolute
         :class="{'hidden': details}"
       >
         <v-layout row wrap>
-          <v-flex
+          <span
+            class="floatleft"
+            :style="{'margin': '1px', 'height': imgRatio * imgWidth + 1 + 'px'}"
             v-for="parl in parls"
             :key="parl.slug"
             v-tooltip:top="{html: tooltip(parl, sort)}"
@@ -201,7 +203,7 @@ a {
                 :height="imgRatio * imgWidth"
               />
             </a>
-          </v-flex>
+          </span>
         </v-layout>
       </v-container>
     </main>
